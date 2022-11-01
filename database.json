@@ -8,9 +8,9 @@
   },
   "test": {
     "driver": "pg",
-    "host": { "ENV": "POSTGRES_HOST_TEST" },
+    "host": { "ENV": "POSTGRES_HOST" },
     "database": { "ENV": "POSTGRES_DB_TEST" },
-    "user": { "ENV": "POSTGRES_USER_TEST" },
-    "password": { "ENV": "POSTGRES_PASSWORD_TEST" }
+    "user": { "ENV": "POSTGRES_USER" },
+    "password": { "ENV": "POSTGRES_PASSWORD" }
   }
 }
