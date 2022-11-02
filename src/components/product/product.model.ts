@@ -11,7 +11,13 @@ export default class Product {
 
       conn.release();
 
-      return result.rows;
+      const products = this.convertToProducts(result.rows);
+
+      if (products.length) {
+        return products;
+      }
+
+      return [];
     } catch (error) {
       throw new Error('Could not get all products');
     }
@@ -27,7 +33,7 @@ export default class Product {
         [newProduct.name, newProduct.price, newProduct.category],
       );
 
-      const product: IProduct = result.rows[0];
+      const product = this.convertToProducts(result.rows)[0];
 
       conn.release();
 
@@ -48,11 +54,9 @@ export default class Product {
 
       conn.release();
 
-      const product: IProduct = result.rows[0];
+      const product = this.convertToProducts(result.rows)[0];
 
       if (product) {
-        product.price = Number(product.price);
-
         return product;
       } 
 
@@ -71,13 +75,9 @@ export default class Product {
 
       conn.release();
 
-      const products: IProduct[] = Array.from(result.rows);
+      const products = this.convertToProducts(result.rows);
 
       if (products.length) {
-        products.forEach((product: IProduct): void => {
-          product.price = Number(product.price);
-        });
-
         return products;
       }
 
@@ -85,5 +85,13 @@ export default class Product {
     } catch (error) {
       throw new Error('Could not get products by category');
     }
+  }
+
+  private static convertToProducts(products: any[]): IProduct[] {
+    products.forEach((product: IProduct): void => {
+      product.price = Number(product.price);
+    });
+
+    return products;
   }
 }

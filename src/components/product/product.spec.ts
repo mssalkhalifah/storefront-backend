@@ -1,14 +1,17 @@
 import { ICreateProduct, IProduct } from './product.interfaces';
 import Product from './product.model';
+import request from 'supertest';
+import app from '../../server';
 
 describe('Product Component', (): void => {
-  describe('product model', (): void => {
-    const productTest: IProduct = {
-      id: 1,
-      name: 'Iphone 12',
-      price: 599.99,
-      category: 'electronics',
-    };
+  const productTest: IProduct = {
+    id: 1,
+    name: 'Iphone 12',
+    price: 599.99,
+    category: 'electronics',
+  };
+
+  describe('model', (): void => {
 
     it('should initially return an empty array with index', async (): Promise<void> => {
       const result = await Product.index();
@@ -56,5 +59,41 @@ describe('Product Component', (): void => {
     });
 
     it('should have a method to display the top 5 most popular products');
+
+  });
+
+  describe('controller', (): void => {
+    const productTest2 = structuredClone(productTest); 
+    productTest2.id = 2;
+
+    it('should insert a product', async (): Promise<void> => {
+      const newProduct = await request(app).post('/product').send(productTest);
+
+      expect(newProduct.body).toEqual(productTest2);
+    });
+
+    it('should return a valid list of items', async (): Promise<void> => {
+      const products = await request(app).get('/products');
+
+      expect(products.body).toEqual([productTest, productTest2]);
+    });
+
+    it('should return the correct product by id', async (): Promise<void> => {
+      const product = await request(app).get('/products/1');
+
+      expect(product.body).toEqual(productTest);
+    });
+
+    it('should return a list of valid products by category', async (): Promise<void> => {
+      const products = await request(app).get('/products/category/electronics');
+
+      expect(products.body).toEqual([productTest, productTest2]);
+    });
+
+    it('should return a null if a category does not exist', async (): Promise<void> => {
+      const products = await request(app).get('/products/category/thisdoesnotexist');
+
+      expect(products.body).toBeNull();
+    });
   });
 });
