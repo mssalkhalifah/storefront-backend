@@ -1,6 +1,8 @@
-import { Response, Request } from 'express';
+import { Response, Request, NextFunction } from 'express';
+import { isInteger } from '../../utils/mathUtil';
 import { ICreateProduct } from './product.interfaces';
-import  Product  from './product.model';
+import ServerError from '../../errors/errorServer';
+import Product from './product.model';
 
 export default class ProductController {
   static async getAllProducts(_req: Request, res: Response): Promise<void>  {
@@ -9,10 +11,16 @@ export default class ProductController {
     res.status(200).json(products);
   }
 
-  static async getProductById(req: Request, res: Response): Promise<void> {
+  static async getProductById(req: Request, res: Response, next: NextFunction): Promise<void> {
     const { id } = req.params;
+
     const product = await Product.show(Number(id));
 
+    if (!product) {
+      next(ServerError.fileNotFound(`product id: ${id} not found`));
+      return;
+    }
+    
     res.status(200).json(product);
   }
 

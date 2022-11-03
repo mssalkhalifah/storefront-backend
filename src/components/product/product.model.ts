@@ -41,7 +41,7 @@ export default class Product {
 
       return product;
     } catch (error) {
-      throw new Error(`Could not add a new product: ${newProduct}`);
+      throw new Error(`${error}`);
     }
   }
 

@@ -2,6 +2,7 @@ import { ICreateProduct, IProduct } from './product.interfaces';
 import Product from './product.model';
 import request from 'supertest';
 import app from '../../server';
+import ErrorCodes from '../../errors/errorCodes';
 
 describe('Product Component', (): void => {
   const productTest: IProduct = {
@@ -67,9 +68,19 @@ describe('Product Component', (): void => {
     productTest2.id = 2;
 
     it('should insert a product', async (): Promise<void> => {
-      const newProduct = await request(app).post('/product').send(productTest);
+      const newProduct: ICreateProduct = {
+        name: 'Iphone 12',
+        price: 599.99,
+        category: 'electronics',
+      };
+      const insertedProduct = await request(app).post('/product').send(newProduct);
 
-      expect(newProduct.body).toEqual(productTest2);
+      expect(insertedProduct.body).toEqual({
+        id: 2,
+        name: 'Iphone 12',
+        price: 599.99,
+        category: 'electronics',
+      });
     });
 
     it('should return a valid list of items', async (): Promise<void> => {
@@ -82,6 +93,12 @@ describe('Product Component', (): void => {
       const product = await request(app).get('/products/1');
 
       expect(product.body).toEqual(productTest);
+    });
+
+    it('should return error 400 if a string is used for id', async (): Promise<void> => {
+      const product = await request(app).get('/products/stringID');
+
+      expect(product.statusCode).toEqual(400);
     });
 
     it('should return a list of valid products by category', async (): Promise<void> => {
