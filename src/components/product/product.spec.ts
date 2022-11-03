@@ -2,7 +2,6 @@ import { ICreateProduct, IProduct } from './product.interfaces';
 import Product from './product.model';
 import request from 'supertest';
 import app from '../../server';
-import ErrorCodes from '../../errors/errorCodes';
 
 describe('Product Component', (): void => {
   const productTest: IProduct = {

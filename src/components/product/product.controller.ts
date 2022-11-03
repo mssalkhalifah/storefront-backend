@@ -1,5 +1,4 @@
 import { Response, Request, NextFunction } from 'express';
-import { isInteger } from '../../utils/mathUtil';
 import { ICreateProduct } from './product.interfaces';
 import ServerError from '../../errors/errorServer';
 import Product from './product.model';
