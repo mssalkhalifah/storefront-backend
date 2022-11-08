@@ -9,11 +9,12 @@ const errorHandler = (
 ): void => {
   const errorException = error as ErrorException;
 
-  if (errorException.statusCode < 500) {
+  if (errorException.statusCode && errorException.statusCode < 500) {
     res
       .status(errorException.statusCode)
-      .send({ statusCode: errorException.statusCode, message: 'ServerError: '.concat(errorException.message) });
+      .send({ statusCode: errorException.statusCode, message: errorException.message });
   } else {
+    console.log(error);
     res.status(500).send({ statusCode: 500, message: 'Something went wrong.' });
   }
 

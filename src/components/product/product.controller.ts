@@ -1,5 +1,6 @@
 import { Response, Request, NextFunction } from 'express';
 import { ICreateProduct } from './product.interfaces';
+import { ISerializedUser } from '../user/user.interfaces';
 import ServerError from '../../errors/errorServer';
 import Product from './product.model';
 
@@ -31,12 +32,10 @@ export default class ProductController {
   }
 
   static async createProduct(req: Request, res: Response): Promise<void>  {
-    const { name, price, category } = req.body;
-    const newProduct: ICreateProduct = {
-      name: name,
-      price: price,
-      category: category,
-    };
+    const newProduct: ICreateProduct = req.body;
+    const userSerialized: ISerializedUser = req.cookies.token;
+    
+    newProduct.user_id = userSerialized.id;
 
     const insertedProduct = await Product.create(newProduct);
 

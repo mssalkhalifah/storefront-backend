@@ -1,6 +1,7 @@
 import { ICreateProduct, IProduct } from './product.interfaces';
 import Product from './product.model';
 import request from 'supertest';
+import User from '../user/user.model';
 import app from '../../server';
 
 describe('Product Component', (): void => {
@@ -9,10 +10,19 @@ describe('Product Component', (): void => {
     name: 'Iphone 12',
     price: 599.99,
     category: 'electronics',
+    user_id: 1,
   };
 
-  describe('model', (): void => {
+  beforeAll(async (): Promise<void> => {
+    await User.create({
+      email: 'product@test.com',
+      firstname: 'product',
+      lastname: 'test',
+      password: 'product@test123',
+    });
+  });
 
+  describe('model', (): void => {
     it('should initially return an empty array with index', async (): Promise<void> => {
       const result = await Product.index();
       expect(result).toEqual([]);
@@ -23,8 +33,9 @@ describe('Product Component', (): void => {
         name: 'Iphone 12',
         price: 599.99,
         category: 'electronics',
+        user_id: 1,
       };
-
+      
       const product: IProduct = await Product.create(newProduct);
       expect(product).toEqual(productTest);
     });
@@ -63,29 +74,10 @@ describe('Product Component', (): void => {
   });
 
   describe('controller', (): void => {
-    const productTest2 = structuredClone(productTest); 
-    productTest2.id = 2;
-
-    it('should insert a product', async (): Promise<void> => {
-      const newProduct: ICreateProduct = {
-        name: 'Iphone 12',
-        price: 599.99,
-        category: 'electronics',
-      };
-      const insertedProduct = await request(app).post('/product').send(newProduct);
-
-      expect(insertedProduct.body).toEqual({
-        id: 2,
-        name: 'Iphone 12',
-        price: 599.99,
-        category: 'electronics',
-      });
-    });
-
     it('should return a valid list of items', async (): Promise<void> => {
       const products = await request(app).get('/products');
 
-      expect(products.body).toEqual([productTest, productTest2]);
+      expect(products.body).toEqual([productTest]);
     });
 
     it('should return the correct product by id', async (): Promise<void> => {
@@ -103,7 +95,7 @@ describe('Product Component', (): void => {
     it('should return a list of valid products by category', async (): Promise<void> => {
       const products = await request(app).get('/products/category/electronics');
 
-      expect(products.body).toEqual([productTest, productTest2]);
+      expect(products.body).toEqual([productTest]);
     });
 
     it('should return a null if a category does not exist', async (): Promise<void> => {

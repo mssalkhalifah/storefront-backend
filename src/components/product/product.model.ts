@@ -25,12 +25,12 @@ export default class Product {
 
   static async create(newProduct: ICreateProduct): Promise<IProduct> {
     try {
-      const sql = 'INSERT INTO product (name, price, category) VALUES($1, $2, $3) RETURNING *';
+      const sql = 'INSERT INTO product (name, price, category, user_id) VALUES($1, $2, $3, $4) RETURNING *';
       const conn = await database.client.connect();
 
       const result = await conn.query(
         sql,
-        [newProduct.name, newProduct.price, newProduct.category],
+        [newProduct.name, newProduct.price, newProduct.category, newProduct.user_id],
       );
 
       const product = this.convertToProducts(result.rows)[0];
