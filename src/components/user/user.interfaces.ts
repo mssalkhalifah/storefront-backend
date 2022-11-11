@@ -14,7 +14,7 @@ export interface IUser {
 } 
 
 export interface ISerializedUser extends Omit<IUser, 'user_password'> {
-  password?: string
+  user_password?: string
   iat?: number,
   exp?: number,
 }

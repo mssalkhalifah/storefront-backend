@@ -19,7 +19,7 @@ export default class Product {
 
       return [];
     } catch (error) {
-      throw new Error('Could not get all products');
+      throw error;
     }
   }
 

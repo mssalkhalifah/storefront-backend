@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import { ICreateUser, IUser } from './user.interfaces';
 
 export default class User {
-  private static TABLE_NAME: string = 'users';
+  private static readonly TABLE_NAME: string = 'users';
 
   static async index(): Promise<IUser[]> {
     try {

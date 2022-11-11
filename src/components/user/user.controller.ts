@@ -9,7 +9,9 @@ import User from './user.model';
 export default class UserController {
   static async getAllUsers(_req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const users = await User.index();
+      const users: ISerializedUser[] = await User.index();
+
+      users.forEach((user: ISerializedUser): void => {user.user_password = undefined;});
 
       res.status(200).send(users);
     } catch (error) {
@@ -20,12 +22,14 @@ export default class UserController {
   static async getUserById(req: Request, res: Response, next: NextFunction): Promise<void> {
     const { id } = req.params;
     
-    const user = await User.show(Number(id));
+    const user: ISerializedUser = await User.show(Number(id));
 
     if (!user) {
       next(ServerError.fileNotFound(`user id ${id} does not exist`));
       return;
     }
+
+    user.user_password = undefined;
 
     res.status(200).send(user);
   }
@@ -37,7 +41,7 @@ export default class UserController {
       const createdUser = await User.create(newUser);
       const serializedUser: ISerializedUser = createdUser; 
 
-      serializedUser.password = undefined;
+      serializedUser.user_password = undefined;
 
       const token = jwt.sign(serializedUser, process.env.MY_SECRET_KEY!, { expiresIn: '15m' });
 
@@ -76,21 +80,24 @@ export default class UserController {
 
   static async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userSerialized: ISerializedUser = req.body;
+      const { email, password } = req.body;
       
-      const user = await User.getUserByEmail(userSerialized.email);
+      const user = await User.getUserByEmail(email);
 
       if (!user) {
-        next(ServerError.unauthorized(`email "${userSerialized.email}" does not exist`));
+        next(ServerError.unauthorized(`email "${email}" does not exist`));
         return;
       }
 
-      const validPassword = await bcrypt.compare(userSerialized.password!, user.user_password);
+      const validPassword = await bcrypt.compare(password, user.user_password);
 
       if (!validPassword) {
         next(ServerError.unauthorized('password is incorrect'));
         return;
       }
+
+      const userSerialized: ISerializedUser = user;
+      userSerialized.user_password = undefined;
 
       const token = jwt.sign(userSerialized, process.env.MY_SECRET_KEY!, { expiresIn: '15m' });
 
