@@ -7,10 +7,10 @@ import { jwtAuthenticator } from '../../middlewares/jwtAuthenticator';
 const userRouter = (app: Express): void => {
   app.get('/user/get/:id', jwtAuthenticator, validateRequest(getUserValidation), UserController.getUserById);
   app.get('/user/all', jwtAuthenticator, UserController.getAllUsers);
+  app.get('/user/me', jwtAuthenticator, UserController.getCurrentUser);
 
   app.post('/user/create', validateRequest(createUserValidation), UserController.createUser);
   app.post('/user/login', validateRequest(loginValidation), UserController.login);
-  app.post('/user/me', jwtAuthenticator, UserController.getCurrentUser);
   app.post('/user/logout', jwtAuthenticator, UserController.logoutCurrentUser);
 };
 

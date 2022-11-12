@@ -11,11 +11,11 @@ const orderRouter = (app: Express): void => {
     jwtAuthenticator, 
     validateRequest(getOrderValidation),
     OrderController.getAllOrderProductsByOrderId);
-  app.get('/orders/:id/product/:productId/update/quantity/:quantity',
+
+  app.post('/orders/:id/product/:productId/update/quantity/:quantity',
     jwtAuthenticator,
     validateRequest(updateQuantityValidation),
     OrderController.updateQuantityOfProduct);
-
   app.post('/orders/:id/setcomplete', 
     jwtAuthenticator, 
     validateRequest(getOrderValidation),
