@@ -5,6 +5,7 @@ dotenv.config();
 
 const {
   POSTGRES_HOST,
+  POSTGRES_HOST_DOCKER,
   POSTGRES_DB,
   POSTGRES_USER,
   POSTGRES_PASSWORD,
@@ -33,8 +34,18 @@ switch (ENV) {
     });
     break;
 
+  case 'post': {
+    console.log(POSTGRES_HOST_DOCKER);
+    client = new Pool({
+      host: POSTGRES_HOST_DOCKER,
+      database: POSTGRES_DB,
+      user: POSTGRES_USER,
+      password: POSTGRES_PASSWORD,
+    });
+    break;
+  }
   default:
-    throw Error('ENV must be test or dev');
+    throw Error('ENV must be test, dev or post');
 }
 
 export default { client };

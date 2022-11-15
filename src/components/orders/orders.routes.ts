@@ -6,22 +6,22 @@ import { addProductToOrder, getOrderValidation, updateQuantityValidation } from 
 
 const orderRouter = (app: Express): void => {
   app.get('/orders', jwtAuthenticator, OrderController.getAllOrders);
-  app.get('/orders/:id', jwtAuthenticator, validateRequest(getOrderValidation), OrderController.getOrderById);
-  app.get('/orders/:id/orderProducts', 
+  app.get('/order/:id', jwtAuthenticator, validateRequest(getOrderValidation), OrderController.getOrderById);
+  app.get('/order/:id/orderProducts', 
     jwtAuthenticator, 
     validateRequest(getOrderValidation),
     OrderController.getAllOrderProductsByOrderId);
 
-  app.post('/orders/:id/product/:productId/update/quantity/:quantity',
+  app.post('/order/:id/product/:productId/update/quantity/:quantity',
     jwtAuthenticator,
     validateRequest(updateQuantityValidation),
     OrderController.updateQuantityOfProduct);
-  app.post('/orders/:id/setcomplete', 
+  app.post('/order/:id/setcomplete', 
     jwtAuthenticator, 
     validateRequest(getOrderValidation),
     OrderController.setOrderComplete);
   app.post('/order/create', jwtAuthenticator, OrderController.createOrder);
-  app.post('/orders/:id/addProduct', 
+  app.post('/order/:id/addProduct', 
     jwtAuthenticator, 
     validateRequest(addProductToOrder), 
     OrderController.addProductToOrder);

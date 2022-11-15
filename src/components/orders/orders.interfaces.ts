@@ -4,8 +4,13 @@ export interface ICreateOrder {
 
 export interface IOrder {
   id: number,
-  status: number,
+  status: string,
   user_id: number
+}
+
+export interface ICreateOrderProduct {
+  product_id: number,
+  quantity: number
 }
 
 export interface IOrderProduct {

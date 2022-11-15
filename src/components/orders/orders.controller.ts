@@ -1,7 +1,7 @@
 import ServerError from '../../errors/errorServer';
 import { NextFunction, Request, Response } from 'express';
 import { ISerializedUser } from '../user/user.interfaces';
-import { ICreateOrder, IOrderProduct } from './orders.interfaces';
+import { ICreateOrder, ICreateOrderProduct, IOrderProduct } from './orders.interfaces';
 import Order from './orders.model';
 import DatabaseErrorCodes from '../../errors/dbErrorCodes';
 
@@ -52,7 +52,7 @@ export default class OrderController {
   static async addProductToOrder(req: Request, res: Response, next: NextFunction): Promise<void> {
     const { id } = req.params;
     const userSerialized: ISerializedUser = req.cookies.token;
-    const newProduct: IOrderProduct = req.body;
+    const createProductOrder: ICreateOrderProduct = req.body;
 
     try {
       const order = await Order.show(Number(id));
@@ -69,18 +69,24 @@ export default class OrderController {
         return;
       }
       
+      const newProduct: IOrderProduct = {
+        order_id: Number(id),
+        product_id: createProductOrder.product_id,
+        quantity: createProductOrder.quantity,
+      };
+      
       newProduct.order_id = Number(id);
       const addProduct = await Order.addProduct(newProduct);
 
       res.status(200).send(addProduct);
     } catch (error) {
       if ((error as any).code === DatabaseErrorCodes.FOREIGN_KEY_VIOLATION) {
-        next(ServerError.fileNotFound(`product id ${newProduct.product_id} does not exist`));
+        next(ServerError.fileNotFound(`product id ${createProductOrder.product_id} does not exist`));
         return;
       }
 
       if ((error as any).code === DatabaseErrorCodes.UNIQUE_VIOLATION) {
-        next(ServerError.conflictData(`order id ${id} with product id ${newProduct.product_id} already exist`));
+        next(ServerError.conflictData(`order id ${id} with product id ${createProductOrder.product_id} already exist`));
         return;
       }
       
@@ -92,7 +98,14 @@ export default class OrderController {
     const { id } = req.params;
 
     try {
-      const orderProducts = await Order.showAllOrderProductsByOrderId(Number(id)); 
+      const order = await Order.show(Number(id));
+
+      if (!order) {
+        next(ServerError.fileNotFound(`order id ${id} does not exist`));
+        return;
+      }
+
+      const orderProducts = await Order.showAllOrderProductsByOrderId(order.id); 
 
       res.status(200).send(orderProducts);
     } catch (error) {
