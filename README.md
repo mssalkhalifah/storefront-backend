@@ -34,33 +34,33 @@ If using postman here is the list of collections to import:
 
 ### Orders
 
-| Type | Enpoints                                                  | Description                                    |
-| :--: | :-------------------------------------------------------- | :--------------------------------------------- |
-| GET  | /orders                                                   | Get all orders                                 |
-| POST | /order/create                                             | Create an order                                |
-| GET  | /orders/:id                                               | Get an order by id                             |
-| POST | /orders/:id/addProduct                                    | Add a product into an order                    |
-| GET  | /orders/:id/orderProducts                                 | Get all orderProducts that belongs to an order |
-| POST | /orders/:id/product/:productId/update/quantity/:quantitiy | Updates an order product's quantity            |
-| POST | /orders/:id/setcomplete                                   | Set an order's status to complete              |
+| Type | Enpoints                                                 | Description                                    |
+| :--: | :------------------------------------------------------- | :--------------------------------------------- |
+| GET  | /orders                                                  | Get all orders                                 |
+| GET  | /order/:id                                               | Get an order by id                             |
+| GET  | /order/:id/orderProducts                                 | Get all orderProducts that belongs to an order |
+| POST | /order/create                                            | Create an order                                |
+| POST | /order/:id/addProduct                                    | Add a product into an order                    |
+| POST | /order/:id/product/:productId/update/quantity/:quantitiy | Updates an order product's quantity            |
+| POST | /order/:id/setcomplete                                   | Set an order's status to complete              |
 
 ### Products
 
 | Type | Enpoints                     | Description                  |
 | :--: | :--------------------------- | :--------------------------- |
 | GET  | /products                    | Get all products             |
-| POST | /product                     | Create and add a product     |
 | GET  | /products/category/:category | Get all products by category |
 | GET  | /products/:id                | Get product by id            |
+| POST | /product                     | Create and add a product     |
 
 ### Users
 
 | Type | Enpoints      | Description              |
 | :--: | :------------ | :----------------------- |
-| POST | /user/create  | Create a new user        |
 | GET  | /user/get/:id | Get a user by id         |
 | GET  | /user/all     | Get all users            |
 | GET  | /user/me      | Get current user         |
+| POST | /user/create  | Create a new user        |
 | POST | /user/logout  | Logout current user      |
 | POST | /user/login   | Login with existing user |
 
